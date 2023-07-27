@@ -68,6 +68,7 @@ public class SocialMediaController {
         Message addedMessage = messageService.insertNewMessage(message);
         if(addedMessage != null) {
             context.json(mapper.writeValueAsString(addedMessage));
+            context.status(200);
         } else {
             context.status(400);
         }

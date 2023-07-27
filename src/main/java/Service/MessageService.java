@@ -28,10 +28,9 @@ public class MessageService {
      * @return message object that was inserted (if successful), null otherwise.
      */
     public Message insertNewMessage(Message newMessage) {
-        // Check if message exists before trying to insert it into database.
-        if(messageDao.getMessageByID(newMessage.getMessage_id()) == null)
+        if(messageDao.getMessageByID(newMessage.getMessage_id()) != null)
             return messageDao.insertNewMessage(newMessage);
-        
+
         return null;
     } 
 

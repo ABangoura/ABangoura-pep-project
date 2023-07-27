@@ -45,8 +45,6 @@ public class MessageDAOImplementation implements MessageDAO {
     @Override
     public List<Message> getAllMessages() {
 
-        connection = ConnectionUtil.getConnection();
-
         List<Message> messages = new ArrayList<>();
 
         try {
@@ -77,13 +75,13 @@ public class MessageDAOImplementation implements MessageDAO {
         connection = ConnectionUtil.getConnection();
 
         try {
-            String sql = "SELECT * FROM message WHERE id = ?"; // SQL statement to return a message by id.
+            String sql = "SELECT * FROM message WHERE message_id = ?"; // SQL statement to return a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, messageId);
 
             ResultSet rs = ps.executeQuery(); // Now 'rs' has only one row from 'message' table (if query was successful).
 
-            // Retrive data from 'rs' and return the message.
+            // Retrieve data from 'rs' and return the message.
             if(rs.next()) {
                 // Create a new Message object  and set its fields from 'rs'.
                 Message newMessage = new Message();
