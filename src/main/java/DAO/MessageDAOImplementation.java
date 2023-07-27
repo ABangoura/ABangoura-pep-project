@@ -68,14 +68,48 @@ public class MessageDAOImplementation implements MessageDAO {
 
     @Override
     public Message getMessageByID(int messageId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMessageByID'");
+        try {
+            String sql = "SELECT * FROM message WHERE id = ?"; // SQL statement to return a message by id.
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, messageId);
+
+            ResultSet rs = ps.executeQuery(); // Now 'rs' has only one row from 'message' table (if query was successful).
+
+            // Retrive data from 'rs' and return the message.
+            if(rs.next()) {
+                // Create a new Message object  and set its fields from 'rs'.
+                Message newMessage = new Message();
+                newMessage.setMessage_id(rs.getInt("message_id"));
+                newMessage.setPosted_by(rs.getInt("posted_by"));
+                newMessage.setMessage_text(rs.getString("message_text"));
+                newMessage.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+
+                return newMessage;
+            }
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // No message was found by the specified 'id'.
     }
 
     @Override
     public boolean deleteMessageByID(int messageId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteMessageByID'");
+        try {
+            String sql = "DELETE FROM message WHERE id = ?"; // SQL statement to delete a message by id.
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, messageId);
+
+            ps.executeUpdate();
+
+            return true;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false; // No message was found by the specified 'id'.
     }
 
     @Override
