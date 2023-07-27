@@ -28,7 +28,55 @@ public class MessageService {
      * @return message object that was inserted (if successful), null otherwise.
      */
     public Message insertNewMessage(Message newMessage) {
-        return messageDao.insertNewMessage(newMessage);
+        // Check if message exists before trying to insert it into database.
+        if(messageDao.getMessageByID(newMessage.getMessage_id()) == null)
+            return messageDao.insertNewMessage(newMessage);
+        
+        return null;
     } 
+
+    /**
+     * Method to return all messages from the database.
+     * @return List<Message> a list of messages.
+     */
+    public List<Message> getallMessages() {
+        return messageDao.getAllMessages();
+    }
+
+    /**
+     * Method to return a message with a specified id.
+     * @param id id of message to look for.
+     * @return message to return.
+     */
+    public Message getMessageById(int id) {
+        return messageDao.getMessageByID(id);
+    }
+
+    /**
+     * Method to delete a message by id.
+     * @param id of message to be deleted.
+     * @return boolean true if successful, false otherwise.
+     */
+    public boolean deleteMessageByID(int id) {
+        return messageDao.deleteMessageByID(id);
+    }
+
+    /**
+     * Method to update a message by its id.
+     * @param id of message to be updated.
+     */
+    public Message updateMessageByID(int id) {
+        return messageDao.updateMessageByID(id);
+    }
+
+    /**
+     * Method to retrieve all messages from a user, using the user's id.
+     * @param id of the user.
+     */
+    // public List<Message> getAllMessagesByUserID(int id) {
+    //     return messageDao.getAllMessagesByUserID(id);
+    // }
+
+
     
 }

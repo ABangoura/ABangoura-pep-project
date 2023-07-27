@@ -16,6 +16,6 @@ public interface MessageDAO {
 
     public Message updateMessageByID(int messageId);
 
-    public Message getAllMessagesByUserId(int userId);
+    public Message getAllMessagesByUserID(int userId);
 
 }

@@ -21,6 +21,9 @@ public class MessageDAOImplementation implements MessageDAO {
     // Message to create a new message in the 'message' table.
     @Override
     public Message insertNewMessage(Message newMessage) {
+        
+        connection = ConnectionUtil.getConnection();
+
         try {
             String sql = "INSERT INTO message VALUES(default, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -41,6 +44,8 @@ public class MessageDAOImplementation implements MessageDAO {
 
     @Override
     public List<Message> getAllMessages() {
+
+        connection = ConnectionUtil.getConnection();
 
         List<Message> messages = new ArrayList<>();
 
@@ -68,6 +73,9 @@ public class MessageDAOImplementation implements MessageDAO {
 
     @Override
     public Message getMessageByID(int messageId) {
+
+        connection = ConnectionUtil.getConnection();
+
         try {
             String sql = "SELECT * FROM message WHERE id = ?"; // SQL statement to return a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -96,6 +104,9 @@ public class MessageDAOImplementation implements MessageDAO {
 
     @Override
     public boolean deleteMessageByID(int messageId) {
+
+        connection = ConnectionUtil.getConnection();
+
         try {
             String sql = "DELETE FROM message WHERE id = ?"; // SQL statement to delete a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -114,12 +125,33 @@ public class MessageDAOImplementation implements MessageDAO {
 
     @Override
     public Message updateMessageByID(int messageId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateMessageByID'");
+
+        connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "");
+            ps.setInt(2, messageId);
+
+            ResultSet rs = ps.executeQuery();
+            Message message = new Message();
+            message.setMessage_id(rs.getInt("message_id"));
+            message.setPosted_by(rs.getInt("posted_by"));
+            message.setMessage_text(rs.getString("message_text"));
+            message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+
+            return message;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
-    public Message getAllMessagesByUserId(int userId) {
+    public Message getAllMessagesByUserID(int userId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAllMessagesByUserId'");
     }
