@@ -18,11 +18,13 @@ public class MessageDAOImplementation implements MessageDAO {
         connection = ConnectionUtil.getConnection();
     }
 
-    // Message to create a new message in the 'message' table.
+    /**
+     * Method to create a new message in the message table.
+     * @param newMessage message to be inserted.
+     * @return Message object.
+     */
     @Override
     public Message insertNewMessage(Message newMessage) {
-        
-        connection = ConnectionUtil.getConnection();
 
         try {
             String sql = "INSERT INTO message VALUES(default, ?, ?, ?)";
@@ -42,6 +44,10 @@ public class MessageDAOImplementation implements MessageDAO {
         return newMessage;
     }
 
+    /**
+     * Method to get all messages from the messae table.
+     * @return List<Message> a list of messages.
+     */
     @Override
     public List<Message> getAllMessages() {
 
@@ -69,13 +75,16 @@ public class MessageDAOImplementation implements MessageDAO {
         return messages;
     }
 
+    /**
+     * Method to retrieve a message by its id.
+     * @param messageId id of message to be retrieved.
+     * @return Message the message that was retrieved.
+     */
     @Override
     public Message getMessageByID(int messageId) {
 
-        connection = ConnectionUtil.getConnection();
-
         try {
-            String sql = "SELECT * FROM message WHERE message_id = ?"; // SQL statement to return a message by id.
+            String sql = "SELECT * FROM message WHERE message.message_id = ?"; // SQL statement to return a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, messageId);
 
@@ -100,13 +109,16 @@ public class MessageDAOImplementation implements MessageDAO {
         return null; // No message was found by the specified 'id'.
     }
 
+    /**
+     * Method to delete a message given its id.
+     * @param messageId id of message to be deleted.
+     * @return boolean returns true if successful, false otherwise.
+     */
     @Override
     public boolean deleteMessageByID(int messageId) {
 
-        connection = ConnectionUtil.getConnection();
-
         try {
-            String sql = "DELETE FROM message WHERE id = ?"; // SQL statement to delete a message by id.
+            String sql = "DELETE FROM message WHERE message.id = ?"; // SQL statement to delete a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, messageId);
 
@@ -121,13 +133,16 @@ public class MessageDAOImplementation implements MessageDAO {
         return false; // No message was found by the specified 'id'.
     }
 
+    /**
+     * Method to update a message given its id.
+     * @param messageId id of message to be updated.
+     * @return Message the message that was updated.
+     */
     @Override
     public Message updateMessageByID(int messageId) {
 
-        connection = ConnectionUtil.getConnection();
-
         try {
-            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            String sql = "UPDATE message SET message_text = ? WHERE message.message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, "");
             ps.setInt(2, messageId);
@@ -148,10 +163,38 @@ public class MessageDAOImplementation implements MessageDAO {
         return null;
     }
 
+    /**
+     * Method to get all messages by a user given the user id.
+     * @param userId id of user whose messages need to be retrieved.
+     * @return List<Message> a list of messages that were retrieved.
+     */
     @Override
-    public Message getAllMessagesByUserID(int userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllMessagesByUserId'");
+    public List<Message> getAllMessagesByUserID(int userId) {
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            String sql = "SELECT message.message_text FROM message INNER JOIN account ON message.posted_by = account.account_id WHERE account.accoun_id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                Message newMessage = new Message();
+                newMessage.setMessage_id(rs.getInt("message_id"));
+                newMessage.setPosted_by(rs.getInt("posted_by"));
+                newMessage.setMessage_text(rs.getString("message_text"));
+                newMessage.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+
+                messages.add(newMessage);
+            }
+            return messages;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
+    
     
 }

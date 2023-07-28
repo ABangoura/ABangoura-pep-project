@@ -7,10 +7,8 @@ public interface AccountDAO {
     
     public Account insertNewAccount(Account newAccount);
     
-    public Account geAccountByID(int id);
+    public boolean logAccountIn(Account account);
 
-    public Account updateAccount(Account newAccount);
-
-    public boolean deleteAccountByID(int id);
+    public Account getAccountByID(int id);
 
 }

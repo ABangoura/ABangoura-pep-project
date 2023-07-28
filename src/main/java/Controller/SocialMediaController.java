@@ -35,9 +35,14 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
+        app.post("/register", this::insertNewAccount);
+        app.post("/login", this::logAccountIn);
         app.post("/messages", this::insertNewMessage);
         app.get("/messages", this::getAllMessages);
         app.get("/messages/{message_id}", this::getMessageByID);
+        app.delete("/messages/{message_id}", this::deleteMessageByID);
+        app.patch("/messages/{message_id}", this::updateMessageByID);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByUserID);
 
         return app;
     }
@@ -72,6 +77,34 @@ public class SocialMediaController {
         } else {
             context.status(400);
         }
+    }
+
+    private void deleteMessageByID(Context context) throws JsonProcessingException {
+
+    }
+
+    private void updateMessageByID(Context context) throws JsonProcessingException {
+
+    }
+
+    private void getAllMessagesByUserID(Context context) throws JsonProcessingException {
+
+    }
+
+    private void insertNewAccount(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(context.body(), Account.class);
+        Account addedAccount = accountService.insertNewAccount(account);
+        if(addedAccount != null) {
+            context.json(mapper.writeValueAsString(addedAccount));
+            context.status(200);
+        } else {
+            context.status(400);
+        }
+    }
+
+    private void logAccountIn(Context context) throws JsonProcessingException {
+
     }
 
 

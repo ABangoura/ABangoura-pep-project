@@ -1,8 +1,8 @@
 package Service;
 
 import java.util.*;
-import DAO.*;
-import Model.*;
+import DAO.MessageDAOImplementation;
+import Model.Message;
 
 public class MessageService {
     private MessageDAOImplementation messageDao;
