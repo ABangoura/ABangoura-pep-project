@@ -57,14 +57,14 @@ public class SocialMediaController {
     }
 
     private void getMessageByID(Context context) throws JsonProcessingException {
+        int id = Integer.parseInt(context.pathParam("message_id"));
+
         ObjectMapper mapper = new ObjectMapper();
-        Message message = mapper.readValue(context.body(), Message.class);
-        Message messageToReturn = messageService.getMessageById(message.getMessage_id());
+        //Message message = mapper.readValue(context.body(), Message.class);
+        Message messageToReturn = messageService.getMessageById(id);
         if(messageToReturn != null) {
             context.json(mapper.writeValueAsString(messageToReturn));
-        } else {
-            context.status(400);
-        }
+        } 
     }
 
     private void insertNewMessage(Context context) throws JsonProcessingException {
@@ -79,16 +79,47 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler to delete a message given the message id.
+     * This handler should return a message object if deletion was successful,
+     * with code 200.
+     * @param context
+     * @throws JsonProcessingException
+     */
     private void deleteMessageByID(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int id = Integer.parseInt(context.pathParam("message_id"));
 
+        Message message = messageService.getMessageById(id);
+        if(message != null) {
+            messageService.deleteMessageByID(id);
+            context.json(mapper.writeValueAsString(message));
+            context.status(200);
+        }
     }
 
     private void updateMessageByID(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        String message_text = context.pathParam("message_text");
 
+        Message message = messageService.getMessageById(message_id);
+        if(message != null) {
+            Message updatedMessage = messageService.updateMessageByID(message_id, message_text);
+            context.json(mapper.writeValueAsString(updatedMessage));
+            context.status(200);
+        }
     }
 
     private void getAllMessagesByUserID(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int user_id = Integer.parseInt(context.pathParam("account_id"));
+        List<Message> list = messageService.getAllMessagesByUserID(user_id);
 
+        if(list != null) {
+            context.json(mapper.writeValueAsString(list));
+            context.status(200);
+        }
     }
 
     private void insertNewAccount(Context context) throws JsonProcessingException {

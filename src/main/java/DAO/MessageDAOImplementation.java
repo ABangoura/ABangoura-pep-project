@@ -45,7 +45,7 @@ public class MessageDAOImplementation implements MessageDAO {
     }
 
     /**
-     * Method to get all messages from the messae table.
+     * Method to get all messages from the message table.
      * @return List<Message> a list of messages.
      */
     @Override
@@ -84,7 +84,7 @@ public class MessageDAOImplementation implements MessageDAO {
     public Message getMessageByID(int messageId) {
 
         try {
-            String sql = "SELECT * FROM message WHERE message.message_id = ?"; // SQL statement to return a message by id.
+            String sql = "SELECT * FROM message WHERE message_id = ?"; // SQL statement to return a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, messageId);
 
@@ -139,13 +139,13 @@ public class MessageDAOImplementation implements MessageDAO {
      * @return Message the message that was updated.
      */
     @Override
-    public Message updateMessageByID(int messageId) {
+    public Message updateMessageByID(int message_Id, String message_text) {
 
         try {
-            String sql = "UPDATE message SET message_text = ? WHERE message.message_id = ?";
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, "");
-            ps.setInt(2, messageId);
+            ps.setString(1, message_text);
+            ps.setInt(2, message_Id);
 
             ResultSet rs = ps.executeQuery();
             Message message = new Message();
@@ -173,7 +173,7 @@ public class MessageDAOImplementation implements MessageDAO {
         List<Message> messages = new ArrayList<>();
 
         try {
-            String sql = "SELECT message.message_text FROM message INNER JOIN account ON message.posted_by = account.account_id WHERE account.accoun_id = ?";
+            String sql = "SELECT * FROM message WHERE message.posted_by = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();

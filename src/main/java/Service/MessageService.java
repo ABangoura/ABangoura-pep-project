@@ -64,17 +64,17 @@ public class MessageService {
      * Method to update a message by its id.
      * @param id of message to be updated.
      */
-    public Message updateMessageByID(int id) {
-        return messageDao.updateMessageByID(id);
+    public Message updateMessageByID(int id, String message_text) {
+        return messageDao.updateMessageByID(id, message_text);
     }
 
     /**
      * Method to retrieve all messages from a user, using the user's id.
      * @param id of the user.
      */
-    // public List<Message> getAllMessagesByUserID(int id) {
-    //     return messageDao.getAllMessagesByUserID(id);
-    // }
+    public List<Message> getAllMessagesByUserID(int id) {
+        return messageDao.getAllMessagesByUserID(id);
+    }
 
 
     

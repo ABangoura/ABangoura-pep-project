@@ -34,8 +34,8 @@ public class AccountService {
         return null;
     }
 
-    // public Account getAccountById(int id) {
-    //     return accountDAO.getAccountByID(id);
-    // }
+    public Account getAccountById(int id) {
+        return accountDAO.getAccountByID(id);
+    }
 
 }
