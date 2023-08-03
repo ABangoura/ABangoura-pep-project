@@ -7,8 +7,8 @@ public interface AccountDAO {
     
     public Account insertNewAccount(Account newAccount);
     
-    public boolean logAccountIn(Account account);
+    public Account logAccountIn(Account account);
 
-    public Account getAccountByID(int id);
+    public Account getAccount(String userName, String password);
 
 }

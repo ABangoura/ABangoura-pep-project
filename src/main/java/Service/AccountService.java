@@ -28,14 +28,14 @@ public class AccountService {
      * @return Account account that was inserted (if successful), null otherwise.
      */
     public Account insertNewAccount(Account newAccount) {
-        if(accountDAO.getAccountByID(newAccount.getAccount_id()) != null)
+        if(accountDAO.getAccount(newAccount.getUsername(), newAccount.getPassword()) != null)
             return accountDAO.insertNewAccount(newAccount);
 
         return null;
     }
 
-    public Account getAccountById(int id) {
-        return accountDAO.getAccountByID(id);
+    public Account logAccountIn(Account account) {
+        return accountDAO.logAccountIn(account);
     }
 
 }

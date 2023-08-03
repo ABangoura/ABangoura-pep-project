@@ -27,11 +27,12 @@ public class MessageDAOImplementation implements MessageDAO {
     public Message insertNewMessage(Message newMessage) {
 
         try {
-            String sql = "INSERT INTO message VALUES(default, ?, ?, ?)";
+            String sql = "INSERT INTO message VALUES(default, ?, ?, ?) FROM message INNER JOIN account ON message.posted_by = account.account_id WHERE account.account_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, newMessage.getPosted_by());
             ps.setString(2, newMessage.getMessage_text());
             ps.setLong(3, newMessage.getTime_posted_epoch());
+            ps.setInt(4, newMessage.getPosted_by());
             
             ResultSet rows = ps.executeQuery();
             if(rows.next()) {

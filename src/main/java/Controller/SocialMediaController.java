@@ -73,7 +73,7 @@ public class SocialMediaController {
         Message addedMessage = messageService.insertNewMessage(message);
         if(addedMessage != null) {
             context.json(mapper.writeValueAsString(addedMessage));
-            context.status(200);
+            //context.status(200);
         } else {
             context.status(400);
         }
@@ -94,7 +94,7 @@ public class SocialMediaController {
         if(message != null) {
             messageService.deleteMessageByID(id);
             context.json(mapper.writeValueAsString(message));
-            context.status(200);
+            //context.status(200);
         }
     }
 
@@ -107,7 +107,7 @@ public class SocialMediaController {
         if(message != null) {
             Message updatedMessage = messageService.updateMessageByID(message_id, message_text);
             context.json(mapper.writeValueAsString(updatedMessage));
-            context.status(200);
+            //context.status(200);
         }
     }
 
@@ -118,7 +118,7 @@ public class SocialMediaController {
 
         if(list != null) {
             context.json(mapper.writeValueAsString(list));
-            context.status(200);
+            //context.status(200);
         }
     }
 
@@ -128,13 +128,21 @@ public class SocialMediaController {
         Account addedAccount = accountService.insertNewAccount(account);
         if(addedAccount != null) {
             context.json(mapper.writeValueAsString(addedAccount));
-            context.status(200);
+            //context.status(200);
         } else {
             context.status(400);
         }
     }
 
     private void logAccountIn(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(context.body(), Account.class);
+        if(accountService.logAccountIn(account) != null) {
+            context.json(mapper.writeValueAsString(account));
+        } else {
+            context.status(401);
+        }
+        
 
     }
 

@@ -47,31 +47,36 @@ public class AccountDAOImplementation implements AccountDAO{
      * @param account the account to be logged in.
      * @return boolean true if 'username' and 'password' match in the database, false otherwise.
      */
-    public boolean logAccountIn(Account account) {
+    public Account logAccountIn(Account account) {
         try {
-            String sql = "SELECT account.username, account.password FROM account";
+            String sql = "SELECT account.username, account.password FROM account WHERE username = ? AND password = ?";
             
             PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, account.getUsername());
+            ps.setString(2, account.getPassword());
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
-                if((rs.getString("username") == account.getUsername() && (rs.getString("password")) == account.getPassword()))
-                    return true;
+            if(rs.next()) {
+                Account newAccount = new Account(rs.getString("username"), rs.getString("password" ));
+                // newAccount.setUsername(rs.getString("username"));
+                // newAccount.setPassword(rs.getString("password"));
+                return newAccount;
             }
         } catch(SQLException e) {
             e.printStackTrace();
         }
         
-        return false;
+        return null;
     }
 
     @Override
-    public Account getAccountByID(int id){
+    public Account getAccount(String userName, String password){
 
         try {
-            String sql = "SELECT * FROM account WHERE account.account_id = ?"; // SQL statement to return an account by id.
+            String sql = "SELECT * FROM account WHERE username = ? AND password = ?"; // SQL statement to return an account by id.
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, id);
+            ps.setString(1, userName);
+            ps.setString(2, password);
 
             ResultSet rs = ps.executeQuery();
 
@@ -79,7 +84,6 @@ public class AccountDAOImplementation implements AccountDAO{
             if(rs.next()) {
                 // Create a new Account object  and set its fields from 'rs'.
                 Account account = new Account();
-                account.setAccount_id(rs.getInt("account_id"));
                 account.setUsername(rs.getString("username"));
                 account.setPassword(rs.getString("password"));
 
@@ -90,7 +94,7 @@ public class AccountDAOImplementation implements AccountDAO{
             e.printStackTrace();
         }
 
-        return null; // No message was found by the specified 'id'.
+        return null;
     }
 
 }
