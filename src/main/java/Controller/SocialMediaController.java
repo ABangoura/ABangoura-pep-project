@@ -35,14 +35,14 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.post("/register", this::insertNewAccount);
-        app.post("/login", this::logAccountIn);
-        app.post("/messages", this::insertNewMessage);
-        app.get("/messages", this::getAllMessages);
-        app.get("/messages/{message_id}", this::getMessageByID);
-        app.delete("/messages/{message_id}", this::deleteMessageByID);
-        app.patch("/messages/{message_id}", this::updateMessageByID);
-        app.get("/accounts/{account_id}/messages", this::getAllMessagesByUserID);
+        app.post("/register", this::registerAccountHandler);
+        app.post("/login", this::loginHandler);
+        app.post("/messages", this::insertNewMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageByIDHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageByIDHandler);
+        app.patch("/messages/{message_id}", this::updateMessageByIDHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByUserIDHandler);
 
         return app;
     }
@@ -51,12 +51,12 @@ public class SocialMediaController {
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void getAllMessages(Context context) {
+    private void getAllMessagesHandler(Context context) {
         List<Message> messages = messageService.getallMessages();
         context.json(messages);
     }
 
-    private void getMessageByID(Context context) throws JsonProcessingException {
+    private void getMessageByIDHandler(Context context) throws JsonProcessingException {
         int id = Integer.parseInt(context.pathParam("message_id"));
 
         ObjectMapper mapper = new ObjectMapper();
@@ -67,16 +67,22 @@ public class SocialMediaController {
         } 
     }
 
-    private void insertNewMessage(Context context) throws JsonProcessingException {
+    private void insertNewMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
+
         Message addedMessage = messageService.insertNewMessage(message);
         if(addedMessage != null) {
             context.json(mapper.writeValueAsString(addedMessage));
-            //context.status(200);
         } else {
             context.status(400);
         }
+        // if(addedMessage != null) {
+        //     context.json(mapper.writeValueAsString(addedMessage));
+        //     //context.status(200);
+        // } else {
+        //     context.status(400);
+        // }
     }
 
     /**
@@ -86,7 +92,7 @@ public class SocialMediaController {
      * @param context
      * @throws JsonProcessingException
      */
-    private void deleteMessageByID(Context context) throws JsonProcessingException {
+    private void deleteMessageByIDHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int id = Integer.parseInt(context.pathParam("message_id"));
 
@@ -98,20 +104,20 @@ public class SocialMediaController {
         }
     }
 
-    private void updateMessageByID(Context context) throws JsonProcessingException {
+    private void updateMessageByIDHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
         int message_id = Integer.parseInt(context.pathParam("message_id"));
-        String message_text = context.pathParam("message_text");
+        Message updatedMessage = messageService.updateMessageByID(message_id, message);
 
-        Message message = messageService.getMessageById(message_id);
-        if(message != null) {
-            Message updatedMessage = messageService.updateMessageByID(message_id, message_text);
+        if((updatedMessage != null) && (!updatedMessage.getMessage_text().isBlank()) && (updatedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(updatedMessage));
-            //context.status(200);
         }
+
+        context.status(400);
     }
 
-    private void getAllMessagesByUserID(Context context) throws JsonProcessingException {
+    private void getAllMessagesByUserIDHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int user_id = Integer.parseInt(context.pathParam("account_id"));
         List<Message> list = messageService.getAllMessagesByUserID(user_id);
@@ -122,23 +128,25 @@ public class SocialMediaController {
         }
     }
 
-    private void insertNewAccount(Context context) throws JsonProcessingException {
+    private void registerAccountHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
-        Account addedAccount = accountService.insertNewAccount(account);
+
+        Account addedAccount = accountService.register(account);
         if(addedAccount != null) {
             context.json(mapper.writeValueAsString(addedAccount));
-            //context.status(200);
         } else {
             context.status(400);
         }
     }
 
-    private void logAccountIn(Context context) throws JsonProcessingException {
+    private void loginHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
-        if(accountService.logAccountIn(account) != null) {
-            context.json(mapper.writeValueAsString(account));
+        
+        if(accountService.login(account) != null) {
+            Account loggedAccount = accountService.login(account);
+            context.json(mapper.writeValueAsString(loggedAccount));
         } else {
             context.status(401);
         }

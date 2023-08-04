@@ -27,15 +27,20 @@ public class AccountService {
      * @param newAccount account to be inserted.
      * @return Account account that was inserted (if successful), null otherwise.
      */
-    public Account insertNewAccount(Account newAccount) {
-        if(accountDAO.getAccount(newAccount.getUsername(), newAccount.getPassword()) != null)
-            return accountDAO.insertNewAccount(newAccount);
+    public Account register(Account newAccount) {
+        if((accountDAO.getAccountByUsername(newAccount.getUsername()) == null) &&
+            (!newAccount.getUsername().isBlank()) && (newAccount.getPassword().length() >= 4))
+            return accountDAO.register(newAccount);
 
         return null;
     }
 
-    public Account logAccountIn(Account account) {
-        return accountDAO.logAccountIn(account);
+    public Account login(Account account) {
+        return accountDAO.login(account);
+    }
+
+    public Account getAccountByUsername(String username) {
+        return accountDAO.getAccountByUsername(username);
     }
 
 }

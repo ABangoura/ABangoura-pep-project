@@ -27,22 +27,23 @@ public class MessageDAOImplementation implements MessageDAO {
     public Message insertNewMessage(Message newMessage) {
 
         try {
-            String sql = "INSERT INTO message VALUES(default, ?, ?, ?) FROM message INNER JOIN account ON message.posted_by = account.account_id WHERE account.account_id = ?";
+            String sql = "INSERT INTO message(posted_by, message_text, time_posted_epoch) VALUES(?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, newMessage.getPosted_by());
             ps.setString(2, newMessage.getMessage_text());
             ps.setLong(3, newMessage.getTime_posted_epoch());
-            ps.setInt(4, newMessage.getPosted_by());
-            
-            ResultSet rows = ps.executeQuery();
-            if(rows.next()) {
-                newMessage.setMessage_id(rows.getInt("message_id"));
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()) {
+                int messageId = (int) rs.getInt(1);
+                return new Message(messageId, newMessage.getPosted_by(), newMessage.getMessage_text(), newMessage.getTime_posted_epoch());
             }
         } catch(SQLException e) {
             e.printStackTrace();
         }
 
-        return newMessage;
+        return null;
     }
 
     /**
@@ -140,28 +141,19 @@ public class MessageDAOImplementation implements MessageDAO {
      * @return Message the message that was updated.
      */
     @Override
-    public Message updateMessageByID(int message_Id, String message_text) {
+    public void updateMessageByID(int message_Id, Message message) {
 
         try {
-            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            String sql = "UPDATE message SET message.message_text = ? WHERE message.message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, message_text);
+            ps.setString(1, message.getMessage_text());
             ps.setInt(2, message_Id);
 
-            ResultSet rs = ps.executeQuery();
-            Message message = new Message();
-            message.setMessage_id(rs.getInt("message_id"));
-            message.setPosted_by(rs.getInt("posted_by"));
-            message.setMessage_text(rs.getString("message_text"));
-            message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
-
-            return message;
+            ps.executeUpdate();
 
         } catch(SQLException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 
     /**

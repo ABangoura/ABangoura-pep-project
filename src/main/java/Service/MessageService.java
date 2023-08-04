@@ -28,7 +28,8 @@ public class MessageService {
      * @return message object that was inserted (if successful), null otherwise.
      */
     public Message insertNewMessage(Message newMessage) {
-        if(messageDao.getMessageByID(newMessage.getMessage_id()) != null)
+        if((messageDao.getMessageByID(newMessage.getMessage_id()) == null) &&
+            (!newMessage.getMessage_text().isBlank()) && (newMessage.getMessage_text().length() < 255))
             return messageDao.insertNewMessage(newMessage);
 
         return null;
@@ -64,8 +65,13 @@ public class MessageService {
      * Method to update a message by its id.
      * @param id of message to be updated.
      */
-    public Message updateMessageByID(int id, String message_text) {
-        return messageDao.updateMessageByID(id, message_text);
+    public Message updateMessageByID(int id, Message message) {
+        if(messageDao.getMessageByID(id) != null) {
+            message.setMessage_id(id);
+            return message;
+        }
+
+        return null;
     }
 
     /**
