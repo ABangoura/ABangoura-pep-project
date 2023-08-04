@@ -86,14 +86,14 @@ public class MessageDAOImplementation implements MessageDAO {
     public Message getMessageByID(int messageId) {
 
         try {
-            String sql = "SELECT * FROM message WHERE message_id = ?"; // SQL statement to return a message by id.
+            String sql = "SELECT * FROM message WHERE message.message_id = ?"; // SQL statement to return a message by id.
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, messageId);
 
             ResultSet rs = ps.executeQuery(); // Now 'rs' has only one row from 'message' table (if query was successful).
 
             // Retrieve data from 'rs' and return the message.
-            if(rs.next()) {
+            while(rs.next()) {
                 // Create a new Message object  and set its fields from 'rs'.
                 Message newMessage = new Message();
                 newMessage.setMessage_id(rs.getInt("message_id"));
@@ -141,19 +141,34 @@ public class MessageDAOImplementation implements MessageDAO {
      * @return Message the message that was updated.
      */
     @Override
-    public void updateMessageByID(int message_Id, Message message) {
+    public Message updateMessageByID(int message_Id, Message message) {
 
         try {
             String sql = "UPDATE message SET message.message_text = ? WHERE message.message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, message.getMessage_text());
             ps.setInt(2, message_Id);
+            int numberOfRows = ps.executeUpdate();
+            //ResultSet rs = ps.executeQuery();
+            if(numberOfRows > 0) {
+                String mySQL = "SELECT * FROM message WHERE message.message_id = ?";
+                PreparedStatement ps2 = connection.prepareStatement(mySQL);
+                ps2.setInt(1, message_Id);
 
-            ps.executeUpdate();
+                ResultSet rs = ps2.executeQuery(mySQL);
 
+                Message newMessage = new Message();
+                newMessage.setMessage_id(rs.getInt("message_id"));
+                newMessage.setPosted_by(rs.getInt("posted_by"));
+                newMessage.setMessage_text(rs.getString("message_text"));
+                newMessage.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                return newMessage;
+            }
         } catch(SQLException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     /**
@@ -171,7 +186,7 @@ public class MessageDAOImplementation implements MessageDAO {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
+            if(rs.next()) {
                 Message newMessage = new Message();
                 newMessage.setMessage_id(rs.getInt("message_id"));
                 newMessage.setPosted_by(rs.getInt("posted_by"));

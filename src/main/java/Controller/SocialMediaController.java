@@ -77,12 +77,6 @@ public class SocialMediaController {
         } else {
             context.status(400);
         }
-        // if(addedMessage != null) {
-        //     context.json(mapper.writeValueAsString(addedMessage));
-        //     //context.status(200);
-        // } else {
-        //     context.status(400);
-        // }
     }
 
     /**

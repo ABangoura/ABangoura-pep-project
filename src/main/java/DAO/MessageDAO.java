@@ -14,7 +14,7 @@ public interface MessageDAO {
 
     public boolean deleteMessageByID(int messageId);
 
-    public void updateMessageByID(int messageId, Message message);
+    public Message updateMessageByID(int messageId, Message message);
 
     public List<Message> getAllMessagesByUserID(int userId);
 

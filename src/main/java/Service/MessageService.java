@@ -66,12 +66,13 @@ public class MessageService {
      * @param id of message to be updated.
      */
     public Message updateMessageByID(int id, Message message) {
-        if(messageDao.getMessageByID(id) != null) {
-            message.setMessage_id(id);
-            return message;
-        }
+        return messageDao.updateMessageByID(id, message);
+        // Message retrievedMessage = messageDao.getMessageByID(id);
+        // if(retrievedMessage != null) {
+        //     return messageDao.updateMessageByID(id, message);
+        // }
 
-        return null;
+        // return null;
     }
 
     /**
