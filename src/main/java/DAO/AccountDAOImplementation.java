@@ -51,7 +51,7 @@ public class AccountDAOImplementation implements AccountDAO{
      */
     public Account login(Account account) {
         try {
-            String sql = "SELECT account.id, account.username, account.password FROM account WHERE account.username = ? AND account.password = ?";
+            String sql = "SELECT account.account_id, account.username, account.password FROM account WHERE account.username = ? AND account.password = ?";
             
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, account.getUsername());

@@ -94,7 +94,6 @@ public class SocialMediaController {
         if(message != null) {
             messageService.deleteMessageByID(id);
             context.json(mapper.writeValueAsString(message));
-            //context.status(200);
         }
     }
 
@@ -102,13 +101,15 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         int message_id = Integer.parseInt(context.pathParam("message_id"));
-        Message updatedMessage = messageService.updateMessageByID(message_id, message);
+
+        messageService.updateMessageByID(message_id, message);
+        Message updatedMessage = messageService.getMessageById(message_id);
 
         if((updatedMessage != null) && (!updatedMessage.getMessage_text().isBlank()) && (updatedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(updatedMessage));
+        }else {
+            context.status(400);
         }
-
-        context.status(400);
     }
 
     private void getAllMessagesByUserIDHandler(Context context) throws JsonProcessingException {
@@ -135,12 +136,26 @@ public class SocialMediaController {
     }
 
     private void loginHandler(Context context) throws JsonProcessingException {
+
+        // ObjectMapper mapper = new ObjectMapper();
+        // Account account = mapper.readValue(context.body(), Account.class);
+        // String username = context.pathParam(account.getUsername());
+        // String password = context.pathParam(account.getPassword());
+        
+        // Account existingAccount = accountService.getAccountByUsername(username);
+
+        // if((existingAccount.username == username) && (existingAccount.getPassword() == password)) {
+        //     context.json(mapper.writeValueAsString(existingAccount));
+        // }else {
+        //     context.status(400);
+        // }
+
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
-        
-        if(accountService.login(account) != null) {
-            Account loggedAccount = accountService.login(account);
-            context.json(mapper.writeValueAsString(loggedAccount));
+        Account accountToLogin = accountService.login(account);
+        if(accountToLogin != null) {
+            //Account accountToLogin = accountService.login(account);
+            context.json(mapper.writeValueAsString(accountToLogin));
         } else {
             context.status(401);
         }

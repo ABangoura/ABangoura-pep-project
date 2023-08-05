@@ -142,7 +142,6 @@ public class MessageDAOImplementation implements MessageDAO {
      */
     @Override
     public Message updateMessageByID(int message_Id, Message message) {
-
         try {
             String sql = "UPDATE message SET message.message_text = ? WHERE message.message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -162,6 +161,7 @@ public class MessageDAOImplementation implements MessageDAO {
                 newMessage.setPosted_by(rs.getInt("posted_by"));
                 newMessage.setMessage_text(rs.getString("message_text"));
                 newMessage.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                
                 return newMessage;
             }
         } catch(SQLException e) {
