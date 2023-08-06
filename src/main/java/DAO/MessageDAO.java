@@ -3,7 +3,7 @@ package DAO;
 import Model.Message;
 import java.util.*;
 
-// Interface to abstract table 'message' data access implementation.
+// Interface to set the foundation of how one will interract with the message table.
 public interface MessageDAO {
 
     public Message insertNewMessage(Message newMessage);

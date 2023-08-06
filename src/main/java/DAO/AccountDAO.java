@@ -2,7 +2,7 @@ package DAO;
 
 import Model.Account;
 
-// Interface to abstract table 'account' data access implementation.
+// Interface to set the foundation of how one will interract with the account table.
 public interface AccountDAO {
     
     public Account register(Account newAccount);
